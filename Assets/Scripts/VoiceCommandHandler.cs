@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
-
-public class MyScript : MonoBehaviour
+using UnityEngine.Windows.Speech;
+public class VoiceCommandHandler : MonoBehaviour
 {
-
     [System.Serializable]
     public class Transformation
     {
@@ -24,6 +24,8 @@ public class MyScript : MonoBehaviour
 
     public string serverUrl = "http://172.20.10.6:5000/transform"; // URL of your Flask server
     public GameObject modelParent = null;
+    private KeywordRecognizer keywordRecognizer;
+    private Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
 
     void Start()
     {
@@ -31,15 +33,28 @@ public class MyScript : MonoBehaviour
         {
             modelParent = new GameObject("ModelParent");
         }
+        // Add the keyword and the action to execute when recognized
+        keywords.Add("detect", OnDetectCommand);
+
+        // Initialize and start the KeywordRecognizer
+        keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
+        keywordRecognizer.OnPhraseRecognized += OnPhraseRecognized;
+        keywordRecognizer.Start();
     }
 
-    public void DOSTUFF()
+    private void OnPhraseRecognized(PhraseRecognizedEventArgs args)
     {
-        Debug.Log("Button Clicked");
-        ClearPreviousTransformations();
+        if (keywords.TryGetValue(args.text, out var action))
+        {
+            action.Invoke();
+        }
+    }
 
+    private void OnDetectCommand()
+    {
+        // Call your function here
+        Debug.Log("Detect command recognized!");
         StartCoroutine(GetTransformations());
-
     }
 
     IEnumerator GetTransformations()
@@ -154,6 +169,11 @@ public class MyScript : MonoBehaviour
         }
     }
 
-
+    void OnDestroy()
+    {
+        // Stop and dispose of the keyword recognizer when done
+        keywordRecognizer.Stop();
+        keywordRecognizer.Dispose();
+    }
 }
 
