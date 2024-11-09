@@ -4,6 +4,11 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows.Speech;
+using Microsoft.CognitiveServices.Speech;
+using UnityKeywordRecognizer = UnityEngine.Windows.Speech.KeywordRecognizer;
+using System;
+using System.Threading.Tasks;
+
 public class VoiceCommandHandler : MonoBehaviour
 {
     [System.Serializable]
@@ -14,6 +19,7 @@ public class VoiceCommandHandler : MonoBehaviour
         public float x;
         public float y;
         public float z;
+        public float depth;
     }
 
     [System.Serializable]
@@ -24,8 +30,14 @@ public class VoiceCommandHandler : MonoBehaviour
 
     public string serverUrl = "http://172.20.10.6:5000/transform"; // URL of your Flask server
     public GameObject modelParent = null;
-    private KeywordRecognizer keywordRecognizer;
-    private Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
+    private UnityKeywordRecognizer keywordRecognizer;
+    private Dictionary<string, Func<Task>> keywords = new Dictionary<string, Func<Task>>();
+
+    // for TTS:
+    // TODO: insert azureKey
+    private readonly string azureKey = "INSERT KEY HERE";
+    private readonly string region = "switzerlandnorth";
+    private SpeechSynthesizer synthesizer;
 
     void Start()
     {
@@ -37,31 +49,85 @@ public class VoiceCommandHandler : MonoBehaviour
         keywords.Add("detect", OnDetectCommand);
 
         // Initialize and start the KeywordRecognizer
-        keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
+        keywordRecognizer = new UnityKeywordRecognizer(keywords.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += OnPhraseRecognized;
         keywordRecognizer.Start();
-    }
 
-    private void OnPhraseRecognized(PhraseRecognizedEventArgs args)
-    {
-        if (keywords.TryGetValue(args.text, out var action))
+        //initialize TTS
+        var config = SpeechConfig.FromSubscription(azureKey, region);
+        config.SpeechSynthesisLanguage = "en-US";
+        config.SpeechSynthesisVoiceName = "en-US-AriaNeural"; 
+        synthesizer = new SpeechSynthesizer(config);
+
+        if (synthesizer == null)
         {
-            action.Invoke();
+            Debug.LogError("Speech synthesizer not initialized!");
         }
     }
 
-    private void OnDetectCommand()
+    private async Task PlayTextToSpeech(string text)
+    {
+        var result = await synthesizer.SpeakTextAsync(text);
+
+        if (result.Reason == ResultReason.SynthesizingAudioCompleted)
+        {
+            Debug.Log("Speech synthesis succeeded!");
+        }
+        else
+        {
+            Debug.LogError($"Speech synthesis failed: {result.Reason}");
+        }
+    }
+
+    private async void OnPhraseRecognized(PhraseRecognizedEventArgs args)
+    {
+        try
+        {
+            if (keywords.TryGetValue(args.text, out var action))
+            {
+                await action.Invoke();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error during OnPhraseRecognized async action: {ex.Message}");
+        }
+    }
+
+    private async Task OnDetectCommand()
     {
         // Call your function here
         Debug.Log("Detect command recognized!");
-        StartCoroutine(GetTransformations());
+        await GetTransformations();
     }
 
-    IEnumerator GetTransformations()
+    // Helper method to wrap SendWebRequest in a Task
+    private Task SendWebRequestAsync(UnityWebRequest www)
+    {
+        var tcs = new TaskCompletionSource<object>();
+
+        // Register a callback for when the request is completed
+        www.SendWebRequest().completed += (op) =>
+        {
+            if (www.result == UnityWebRequest.Result.Success)
+            {
+                tcs.SetResult(null); // Complete the task successfully
+            }
+            else
+            {
+                Debug.LogError("Request failed: " + www.error);
+                tcs.SetException(new Exception(www.error)); // Set an exception if failed
+            }
+        };
+
+        return tcs.Task;
+    }
+
+    private async Task GetTransformations()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl);
         Debug.Log("CreatedWebRequest");
-        yield return www.SendWebRequest();
+        await SendWebRequestAsync(www);
 
         if (www.result != UnityWebRequest.Result.Success)
         {
@@ -74,22 +140,11 @@ public class VoiceCommandHandler : MonoBehaviour
             TransformationList transformationList = JsonUtility.FromJson<TransformationList>(jsonResponse);
             if (transformationList.transformations.Count == 0) // no objects were detected, tell the user
             {
-                AudioClip audioClip = Resources.Load<AudioClip>("Audio/" + "no_objects_detected");
-                GameObject audioObject = new GameObject("AudioPlayerObject");
-                AudioSource audioSource = audioObject.AddComponent<AudioSource>();
-                audioSource.clip = audioClip;
-                audioSource.loop = false;        // Ensures it plays only once
-                audioSource.Play();
-
-                // Wait until the audio has finished playing
-                while (audioSource.isPlaying)
-                {
-                    yield return null;
-                }
+                await PlayTextToSpeech("No objects detected");
             }
             else
             {
-                StartCoroutine(VisualizeTransformations(transformationList.transformations));
+                await VisualizeTransformations(transformationList.transformations);
             }
         }
     }
@@ -106,7 +161,7 @@ public class VoiceCommandHandler : MonoBehaviour
         }
     }
 
-    IEnumerator VisualizeTransformations(List<Transformation> transformations)
+    private async Task VisualizeTransformations(List<Transformation> transformations)
     {
         foreach (var transformation in transformations)
         {
@@ -152,38 +207,9 @@ public class VoiceCommandHandler : MonoBehaviour
             textMesh.color = Color.white;  // Ensures visibility
 
             obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            string textToPlay = transformation.class_name + " at " + string.Format("{0:F1}", transformation.depth) + " meters";
+            await PlayTextToSpeech(textToPlay);
 
-
-            yield return StartCoroutine(PlaySpatialAudio(obj, transformation.class_name));
-
-        }
-    }
-
-    IEnumerator PlaySpatialAudio(GameObject obj, string className)
-    {
-        // Load audio clip (ensure audio files are in Resources folder or provide specific path)
-        AudioClip audioClip = Resources.Load<AudioClip>("Audio/" + className); // Example: Resources/Audio/className.wav
-        if (audioClip == null)
-        {
-            Debug.LogWarning("Audio clip not found for " + className);
-            yield break;
-        }
-
-        // Add AudioSource component to the object
-        AudioSource audioSource = obj.AddComponent<AudioSource>();
-        audioSource.clip = audioClip;
-        audioSource.spatialBlend = 1.0f; // Set to 1 for full 3D spatial audio
-        audioSource.minDistance = 1f;    // Minimum distance for the audio to be heard
-        audioSource.maxDistance = 10f;   // Maximum distance before the audio starts to fade
-        audioSource.rolloffMode = AudioRolloffMode.Linear; // Choose the rolloff mode
-
-        // Play the audio
-        audioSource.Play();
-
-        // Wait until the audio has finished playing
-        while (audioSource.isPlaying)
-        {
-            yield return null;
         }
     }
 
@@ -192,6 +218,8 @@ public class VoiceCommandHandler : MonoBehaviour
         // Stop and dispose of the keyword recognizer when done
         keywordRecognizer.Stop();
         keywordRecognizer.Dispose();
+
+        synthesizer.Dispose();
     }
 }
 
