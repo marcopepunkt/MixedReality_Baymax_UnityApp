@@ -72,7 +72,25 @@ public class VoiceCommandHandler : MonoBehaviour
             // Parse JSON
             string jsonResponse = "{\"transformations\":" + www.downloadHandler.text + "}";
             TransformationList transformationList = JsonUtility.FromJson<TransformationList>(jsonResponse);
-            StartCoroutine(VisualizeTransformations(transformationList.transformations));
+            if (transformationList.transformations.Count == 0) // no objects were detected, tell the user
+            {
+                AudioClip audioClip = Resources.Load<AudioClip>("Audio/" + "no_objects_detected");
+                GameObject audioObject = new GameObject("AudioPlayerObject");
+                AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+                audioSource.clip = audioClip;
+                audioSource.loop = false;        // Ensures it plays only once
+                audioSource.Play();
+
+                // Wait until the audio has finished playing
+                while (audioSource.isPlaying)
+                {
+                    yield return null;
+                }
+            }
+            else
+            {
+                StartCoroutine(VisualizeTransformations(transformationList.transformations));
+            }
         }
     }
 
