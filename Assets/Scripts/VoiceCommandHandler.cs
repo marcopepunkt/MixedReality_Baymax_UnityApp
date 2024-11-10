@@ -20,6 +20,7 @@ public class VoiceCommandHandler : MonoBehaviour
         public float y;
         public float z;
         public float depth;
+        public string description;
     }
 
     [System.Serializable]
@@ -28,14 +29,15 @@ public class VoiceCommandHandler : MonoBehaviour
         public List<Transformation> transformations;
     }
 
+    // TODO: change serverUrl for every PC/wifi
     public string serverUrl = "http://172.20.10.6:5000/transform"; // URL of your Flask server
     public GameObject modelParent = null;
     private UnityKeywordRecognizer keywordRecognizer;
     private Dictionary<string, Func<Task>> keywords = new Dictionary<string, Func<Task>>();
 
     // for TTS:
-    // TODO: insert azureKey
-    private readonly string azureKey = "INSERT KEY HERE";
+    // TODO: insert key, region for Azure TTS resource
+    private readonly string azureKey = "key";
     private readonly string region = "switzerlandnorth";
     private SpeechSynthesizer synthesizer;
 
@@ -138,12 +140,17 @@ public class VoiceCommandHandler : MonoBehaviour
             // Parse JSON
             string jsonResponse = "{\"transformations\":" + www.downloadHandler.text + "}";
             TransformationList transformationList = JsonUtility.FromJson<TransformationList>(jsonResponse);
-            if (transformationList.transformations.Count == 0) // no objects were detected, tell the user
+            if (transformationList.transformations.Count == 0) // no objects were detected (neither azure nor our model), tell the user
             {
                 await PlayTextToSpeech("No objects detected");
             }
+            else if (transformationList.transformations[0].class_name == "none")  // we have only the description by AzureCV
+            { 
+                await PlayTextToSpeech(transformationList.transformations[0].description);
+            }
             else
             {
+                await PlayTextToSpeech(transformationList.transformations[0].description);
                 await VisualizeTransformations(transformationList.transformations);
             }
         }
