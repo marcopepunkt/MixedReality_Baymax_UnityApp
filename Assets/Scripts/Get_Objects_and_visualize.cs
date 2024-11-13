@@ -45,6 +45,7 @@ public class Get_Objects_and_visualize : MonoBehaviour
     public void CHANGEIP()
     {
         textMeshProUGUI.text = mytext.text;
+        serverUrl = textMeshProUGUI.text;
     }
     
 
