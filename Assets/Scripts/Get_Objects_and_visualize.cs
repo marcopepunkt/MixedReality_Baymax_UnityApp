@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
+using UnityEngine.UI;
 
-public class MyScript : MonoBehaviour
+public class Get_Objects_and_visualize : MonoBehaviour
 {
+    
+
 
     [System.Serializable]
     public class Transformation
@@ -24,6 +28,9 @@ public class MyScript : MonoBehaviour
 
     public string serverUrl = "http://172.20.10.6:5000/transform"; // URL of your Flask server
     public GameObject modelParent = null;
+    [SerializeField] TextMeshProUGUI textMeshProUGUI = null;
+    public Text mytext = null;
+
 
     void Start()
     {
@@ -31,14 +38,23 @@ public class MyScript : MonoBehaviour
         {
             modelParent = new GameObject("ModelParent");
         }
+        textMeshProUGUI.text = serverUrl;
     }
+
+
+    public void CHANGEIP()
+    {
+        textMeshProUGUI.text = mytext.text;
+        serverUrl = textMeshProUGUI.text;
+    }
+    
 
     public void DOSTUFF()
     {
         Debug.Log("Button Clicked");
-        ClearPreviousTransformations();
 
-        StartCoroutine(GetTransformations());
+        //ClearPreviousTransformations();
+        //StartCoroutine(GetTransformations());
 
     }
 
