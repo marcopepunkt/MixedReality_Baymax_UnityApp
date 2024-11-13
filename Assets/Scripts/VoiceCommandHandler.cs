@@ -44,7 +44,7 @@ public class VoiceCommandHandler : MonoBehaviour
 
     // for TTS:
     // TODO: insert key, region for Azure TTS resource
-    public readonly string azureKey = "1RwNqNW4TC81jkEyw0Eo6Al0FY1RMFrVLICl8VpaBlx1a7X4eXrdJQQJ99AKACI8hq2XJ3w3AAAYACOGiyo6";
+    public readonly string azureKey = "None";
     private readonly string region = "switzerlandnorth";
     private SpeechSynthesizer synthesizer;
 
