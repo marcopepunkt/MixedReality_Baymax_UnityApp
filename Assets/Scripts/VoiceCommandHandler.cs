@@ -8,9 +8,16 @@ using Microsoft.CognitiveServices.Speech;
 using UnityKeywordRecognizer = UnityEngine.Windows.Speech.KeywordRecognizer;
 using System;
 using System.Threading.Tasks;
+using TMPro;
+using UnityEngine.UI;
 
 public class VoiceCommandHandler : MonoBehaviour
 {
+
+    [SerializeField] TextMeshProUGUI Visualization_IP = null;
+    public Text Input_IP = null;
+
+
     [System.Serializable]
     public class Transformation
     {
@@ -37,7 +44,7 @@ public class VoiceCommandHandler : MonoBehaviour
 
     // for TTS:
     // TODO: insert key, region for Azure TTS resource
-    private readonly string azureKey = "key";
+    public readonly string azureKey = "1RwNqNW4TC81jkEyw0Eo6Al0FY1RMFrVLICl8VpaBlx1a7X4eXrdJQQJ99AKACI8hq2XJ3w3AAAYACOGiyo6";
     private readonly string region = "switzerlandnorth";
     private SpeechSynthesizer synthesizer;
 
@@ -95,7 +102,10 @@ public class VoiceCommandHandler : MonoBehaviour
             Debug.LogError($"Error during OnPhraseRecognized async action: {ex.Message}");
         }
     }
-
+    public async void WrapperCallDetect()
+    {
+        await OnDetectCommand();
+    }
     private async Task OnDetectCommand()
     {
         // Call your function here
@@ -218,6 +228,13 @@ public class VoiceCommandHandler : MonoBehaviour
             await PlayTextToSpeech(textToPlay);
 
         }
+    }
+
+
+    public void CHANGEIP()
+    {
+        Visualization_IP.text = Input_IP.text;
+        serverUrl = Input_IP.text;
     }
 
     void OnDestroy()

@@ -343,7 +343,7 @@ MonoBehaviour:
   OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1631341319}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Get_Objects_and_visualize, Assembly-CSharp
         m_MethodName: DOSTUFF
         m_Mode: 1
@@ -2138,13 +2138,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1631341318}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9e7c80554f291e408850134734da038, type: 3}
+  m_Script: {fileID: 11500000, guid: 35c5ae97c9eb07c4aa7b8488f7bffc7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverUrl: http://172.20.10.6:5000/transform
-  modelParent: {fileID: 0}
-  textMeshProUGUI: {fileID: 1855168153}
-  mytext: {fileID: 8348155386694195134}
+  Visualization_IP: {fileID: 1855168153}
+  Input_IP: {fileID: 8348155386694195134}
+  serverUrl: http://127.0.0.1:5000/transform
+  modelParent: {fileID: 963194225}
 --- !u!4 &1631341320
 Transform:
   m_ObjectHideFlags: 0
@@ -2365,6 +2365,22 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - keyword: Find
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1631341319}
+          m_TargetAssemblyTypeName: VoiceCommandHandler, Assembly-CSharp
+          m_MethodName: WrapperCallDetect
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   persistentKeywords: 0
   speechConfirmationTooltipPrefab: {fileID: 8046114618238072051, guid: 271778f6c957b524981067a81d238394, type: 3}
 --- !u!4 &1799431593
@@ -2503,7 +2519,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -94.303665, y: 3.8696203, z: -93.74528, w: -23.3518}
+  m_margin: {x: -143.77611, y: 3.8696203, z: -162.6533, w: -23.3518}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2974,7 +2990,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1631341319}
-        m_TargetAssemblyTypeName: Get_Objects_and_visualize, Assembly-CSharp
+        m_TargetAssemblyTypeName: VoiceCommandHandler, Assembly-CSharp
         m_MethodName: CHANGEIP
         m_Mode: 1
         m_Arguments:
@@ -3141,7 +3157,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8348155387581039284}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.64}
+  m_LocalPosition: {x: 0, y: 0, z: -1.63}
   m_LocalScale: {x: 0.002, y: 0.002, z: 0.01}
   m_Children:
   - {fileID: 8348155387963190724}
@@ -3338,7 +3354,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 360, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8348155388561660319
 GameObject:
