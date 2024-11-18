@@ -1065,7 +1065,7 @@ MonoBehaviour:
   Visualization_IP: {fileID: 1855168153}
   Input_IP: {fileID: 8348155386694195134}
   IP: http://127.0.0.1:5000
-  azureKey: 1O7HoHF9zRMynqiciQCS4NkYbPMNNvsQ9PDjqkVF6bl9kHSIFyMCJQQJ99AKACI8hq2XJ3w3AAAAACOGG6tw
+  azureKey: 
 --- !u!114 &322570577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3119,8 +3119,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1631341319}
-        m_TargetAssemblyTypeName: VoiceCommandHandler, Assembly-CSharp
+      - m_Target: {fileID: 322570576}
+        m_TargetAssemblyTypeName: IO_Setup, Assembly-CSharp
         m_MethodName: CHANGEIP
         m_Mode: 1
         m_Arguments:

@@ -17,7 +17,7 @@ public class IO_Setup : MonoBehaviour
     public string IP = "http://127.0.0.1:5000"; // URL of your Flask server
 
     [SerializeField]
-    public string azureKey = "1O7HoHF9zRMynqiciQCS4NkYbPMNNvsQ9PDjqkVF6bl9kHSIFyMCJQQJ99AKACI8hq2XJ3w3AAAAACOGG6tw";
+    public string azureKey = "None";
 
     private readonly string region = "switzerlandnorth";
     private SpeechSynthesizer synthesizer;

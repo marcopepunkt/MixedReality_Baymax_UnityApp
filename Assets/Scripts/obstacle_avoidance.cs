@@ -59,7 +59,7 @@ public class obstacle_avoidance : MonoBehaviour
             
 
         }// Call your function here
-        await io_Setup.PlayTextToSpeech("Ended obstace avoidance");
+        await io_Setup.PlayTextToSpeech("Ended obstacle avoidance");
     }
 
     public async void stop_detection()
