@@ -1001,6 +1001,88 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312382004}
   m_Mesh: {fileID: 4300010, guid: b566bbce04d66f4428421e81a3af0299, type: 3}
+--- !u!1 &322570573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 322570575}
+  - component: {fileID: 322570577}
+  - component: {fileID: 322570576}
+  - component: {fileID: 322570574}
+  m_Layer: 0
+  m_Name: Baymax_Scripts
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &322570574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322570573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5d57fe46009324d8ac17d344b4b2c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listenerActiveSound: {fileID: 8300000, guid: 45ab465e462644d40aee6385528abe36, type: 3}
+  listenerInactiveSound: {fileID: 8300000, guid: 91549125e9c7094489d9b03576a031b1, type: 3}
+  volume: 0.8
+  io_setup: {fileID: 322570576}
+--- !u!4 &322570575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322570573}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.028564252, y: 0.006021235, z: 0.0048082992}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &322570576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322570573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fddef551feb4d7949ae14251aaabc8f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Visualization_IP: {fileID: 1855168153}
+  Input_IP: {fileID: 8348155386694195134}
+  IP: http://127.0.0.1:5000
+  azureKey: 1O7HoHF9zRMynqiciQCS4NkYbPMNNvsQ9PDjqkVF6bl9kHSIFyMCJQQJ99AKACI8hq2XJ3w3AAAAACOGG6tw
+--- !u!114 &322570577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322570573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 647f2de8e291eea4ebee2b8fd6b7284f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  io_Setup: {fileID: 322570576}
+  low_prio_object: {fileID: 8300000, guid: 205f93a06970ea442b308ce794242740, type: 3}
+  high_prio_object: {fileID: 8300000, guid: 205f93a06970ea442b308ce794242740, type: 3}
+  mid_prio_object: {fileID: 8300000, guid: 205f93a06970ea442b308ce794242740, type: 3}
+  modelParent: {fileID: 963194225}
 --- !u!1 &340311882
 GameObject:
   m_ObjectHideFlags: 0
@@ -2128,7 +2210,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1631341319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2372,6 +2454,54 @@ MonoBehaviour:
         - m_Target: {fileID: 1631341319}
           m_TargetAssemblyTypeName: VoiceCommandHandler, Assembly-CSharp
           m_MethodName: WrapperCallDetect
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - keyword: Hey Baymax
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 322570574}
+          m_TargetAssemblyTypeName: dialog_handler, Assembly-CSharp
+          m_MethodName: StartDialog
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - keyword: Start
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 322570577}
+          m_TargetAssemblyTypeName: obstacle_avoidance, Assembly-CSharp
+          m_MethodName: start_detection
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - keyword: Stop
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 322570577}
+          m_TargetAssemblyTypeName: obstacle_avoidance, Assembly-CSharp
+          m_MethodName: stop_detection
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

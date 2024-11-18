@@ -65,3 +65,24 @@ MonoBehaviour:
       id: 0
       description: None
       axisConstraint: 0
+  - localizationKey: 
+    keyword: Hey Baymax
+    keyCode: 284
+    action:
+      id: 0
+      description: None
+      axisConstraint: 0
+  - localizationKey: 
+    keyword: Start
+    keyCode: 290
+    action:
+      id: 0
+      description: None
+      axisConstraint: 0
+  - localizationKey: 
+    keyword: Stop
+    keyCode: 291
+    action:
+      id: 0
+      description: None
+      axisConstraint: 0

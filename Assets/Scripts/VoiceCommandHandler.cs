@@ -72,6 +72,9 @@ public class VoiceCommandHandler : MonoBehaviour
         {
             Debug.LogError("Speech synthesizer not initialized!");
         }
+
+        //Show IP Adress 
+        Visualization_IP.text = serverUrl;
     }
 
     private async Task PlayTextToSpeech(string text)
