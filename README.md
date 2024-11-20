@@ -5,7 +5,7 @@
 - "Hey Baymax" - To speak with baymax
 - "Toggle Profiler" - To toggle the performance thing
 
-## All the scripts are within the Baymax_scripts.
+## All the scripts are within the Baymax_scripts (change IP and azure key here)
 IO_Setup - Here all the IP Setting as well as Voice Recognition and TTS is handled
 Obstacle_avoidance - Here all the Visualization and spatial Audio is handeled
 Dialog_handler - Here the full dialog is handled.  
