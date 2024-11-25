@@ -37,7 +37,6 @@ public class obstacle_avoidance : MonoBehaviour
         public float y;
         public float z;
         public float depth;
-        public string description;
     }
 
     [System.Serializable]
@@ -55,9 +54,7 @@ public class obstacle_avoidance : MonoBehaviour
             Debug.Log("Detect command recognized!");
             await detect();
 
-          
-            
-
+  
         }// Call your function here
         await io_Setup.PlayTextToSpeech("Ended obstacle avoidance");
     }
@@ -162,6 +159,8 @@ public class obstacle_avoidance : MonoBehaviour
 
             obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             await PlaySpatialAudioAsync(obj,transformation.priority);
+            //string textToPlay = transformation.class_name + " at " + string.Format("{0:F1}", transformation.depth) + " meters";
+            //await io_Setup.PlayTextToSpeech(textToPlay);
         }
     }
 
@@ -185,11 +184,11 @@ public class obstacle_avoidance : MonoBehaviour
 
         if (audioClip != null)
         {
-            PlayAudio(obj, audioClip);
-            await Task.Delay(Mathf.CeilToInt(audioClip.length * 1000)); // Wait for audio to complete
+            await PlayAudio(obj, audioClip);
+            // await Task.Delay(Mathf.CeilToInt(audioClip.length * 1000)); // Wait for audio to complete
         }
     }
-    private void PlayAudio(GameObject obj, AudioClip audio)
+    private async Task PlayAudio(GameObject obj, AudioClip audio)
     {
         if (audio != null)
         {
