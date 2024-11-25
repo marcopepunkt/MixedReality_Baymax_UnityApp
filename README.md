@@ -33,7 +33,7 @@ The can be used to change the audio sound. The coordinates are used for the spat
 
 
 ## How to run this stuff?
-1. Run Flask server (Repo: Mixedreality_Baymax on branch hl2ss and run file PC_to_hololens_python_project/send_to_hololens.py)
+1. Run Flask server. Repo: Mixedreality_Baymax on branch unity_integration_azureOpenAI and run file scripts/baymax.py. To run Gemini you need to install the last 2 packages in environment.yaml
 2. Set API key and IP in Baymax_Scripts -> IO_Setup (IP from the flask server) 
 3. Build it as for hello cube 
 4. Just run it. 
