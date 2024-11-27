@@ -14,7 +14,7 @@ public class IO_Setup : MonoBehaviour
     public Text Input_IP = null;
 
     [SerializeField]
-    public string IP = "http://127.0.0.1:5000"; // URL of your Flask server
+    public string IP = "http://127.0..1:5000"; // URL of your Flask server
 
     [SerializeField]
     public string azureKey = "None";
@@ -22,6 +22,7 @@ public class IO_Setup : MonoBehaviour
     private readonly string region = "switzerlandnorth";
     private SpeechSynthesizer synthesizer;
     private SpeechRecognizer recognizer;
+    private SpeechConfig config;
 
 
 
@@ -30,7 +31,7 @@ public class IO_Setup : MonoBehaviour
     void Start()
     {
         //initialize TTS and Recognizer
-        var config = SpeechConfig.FromSubscription(azureKey, region);
+        config = SpeechConfig.FromSubscription(azureKey, region);
         config.SpeechSynthesisLanguage = "en-US";
         config.SpeechSynthesisVoiceName = "en-US-AriaNeural";
         synthesizer = new SpeechSynthesizer(config);
@@ -53,6 +54,25 @@ public class IO_Setup : MonoBehaviour
     {
         Visualization_IP.text = Input_IP.text;
         IP = Input_IP.text;
+    }
+
+    public void CHANGEVOICE()
+    {
+        if (config.SpeechSynthesisVoiceName == "en-US-AriaNeural")
+        {
+            config.SpeechSynthesisVoiceName = "en-GB-RyanNeural";
+            synthesizer = new SpeechSynthesizer(config);
+
+            Debug.Log("Voice changed to en-GB-RyanNeural");
+        }
+        else
+        {
+            config.SpeechSynthesisVoiceName = "en-US-AriaNeural";
+            synthesizer = new SpeechSynthesizer(config);
+
+            Debug.Log("Voice changed to en-US-AriaNeural");
+        }
+        PlayTextToSpeech("Hello there! This is my new voice. Nice to meet you.");
     }
 
 

@@ -86,3 +86,17 @@ MonoBehaviour:
       id: 0
       description: None
       axisConstraint: 0
+  - localizationKey: 
+    keyword: Introduction
+    keyCode: 292
+    action:
+      id: 0
+      description: None
+      axisConstraint: 0
+  - localizationKey: 
+    keyword: What's the time
+    keyCode: 293
+    action:
+      id: 0
+      description: None
+      axisConstraint: 0
