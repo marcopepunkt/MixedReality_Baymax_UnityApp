@@ -20,8 +20,8 @@ public class IO_Setup : MonoBehaviour
     public string azureKey = "None";
 
     private readonly string region = "switzerlandnorth";
-    private SpeechSynthesizer synthesizer;
-    private SpeechRecognizer recognizer;
+    public SpeechSynthesizer synthesizer;
+    public SpeechRecognizer recognizer;
     private SpeechConfig config;
 
 
