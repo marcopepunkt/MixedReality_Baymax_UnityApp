@@ -53,8 +53,7 @@ public class obstacle_avoidance : MonoBehaviour
         {
             Debug.Log("Detect command recognized!");
             await detect();
-
-  
+            await Task.Delay(200);
         }// Call your function here
         await io_Setup.PlayTextToSpeech("Ended obstacle avoidance");
     }
@@ -62,13 +61,13 @@ public class obstacle_avoidance : MonoBehaviour
     public async void stop_detection()
     {
         running = false;
-        
+        ClearPreviousTransformations();
     }
 
 
     private async Task detect()
     {
-        serverUrl = io_Setup.IP + "/transform";
+        serverUrl = io_Setup.IP + "/collision";
 
         Debug.Log("CreatedWebRequest");
         using (UnityWebRequest www = UnityWebRequest.Get(serverUrl))
@@ -90,7 +89,7 @@ public class obstacle_avoidance : MonoBehaviour
                 await VisualizeTransformations(transformationList.transformations);
 
                 // Clear any previous visualizations
-                ClearPreviousTransformations();
+                //ClearPreviousTransformations();
             }
         }
     }
@@ -137,30 +136,12 @@ public class obstacle_avoidance : MonoBehaviour
                     break;
             }
 
-            // Create a new GameObject to hold the TextMesh
-            GameObject textObj = new GameObject("Label");
-            textObj.transform.SetParent(obj.transform); // Set it as a child of the Cube
-            textObj.transform.localPosition = new Vector3(0, 0.5f, 0); // Adjust position above the Cube
-
-            // Add and configure TextMesh component
-            TextMesh textMesh = textObj.AddComponent<TextMesh>();
-            if (textMesh == null)
-            {
-                Debug.LogError("Failed to add TextMesh component to the GameObject.");
-                continue;
-            }
-
-            textMesh.text = transformation.class_name;
-            textMesh.characterSize = 0.1f;
-            textMesh.fontSize = 50;
-            textMesh.anchor = TextAnchor.MiddleCenter;
-            textMesh.alignment = TextAlignment.Center;
-            textMesh.color = Color.white;  // Ensures visibility
 
             obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             await PlaySpatialAudioAsync(obj,transformation.priority);
             //string textToPlay = transformation.class_name + " at " + string.Format("{0:F1}", transformation.depth) + " meters";
             //await io_Setup.PlayTextToSpeech(textToPlay);
+
         }
     }
 
