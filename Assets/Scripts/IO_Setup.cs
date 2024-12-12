@@ -76,20 +76,37 @@ public class IO_Setup : MonoBehaviour
     }
 
 
-    // This function plays the text using the TTS
+    private bool isPlaying = false;
+
     public async Task PlayTextToSpeech(string text)
     {
-        var result = await synthesizer.SpeakTextAsync(text);
-
-        if (result.Reason == ResultReason.SynthesizingAudioCompleted)
+        if (isPlaying)
         {
-            Debug.Log("Speech synthesis succeeded!");
+            Debug.Log("Speech synthesis is already running.");
+            return;
         }
-        else
+
+        isPlaying = true; // Set the flag
+
+        try
         {
-            Debug.LogError($"Speech synthesis failed: {result.Reason}");
+            var result = await synthesizer.SpeakTextAsync(text);
+
+            if (result.Reason == ResultReason.SynthesizingAudioCompleted)
+            {
+                Debug.Log("Speech synthesis succeeded!");
+            }
+            else
+            {
+                Debug.LogError($"Speech synthesis failed: {result.Reason}");
+            }
+        }
+        finally
+        {
+            isPlaying = false; // Reset the flag
         }
     }
+
 
     // This function gets the recognized speech
     public async Task<string> GetRecognizedSpeechAsync()

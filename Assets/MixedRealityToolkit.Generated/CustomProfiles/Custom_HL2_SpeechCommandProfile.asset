@@ -74,35 +74,42 @@ MonoBehaviour:
       axisConstraint: 0
   - localizationKey: 
     keyword: Start
-    keyCode: 290
+    keyCode: 289
     action:
       id: 0
       description: None
       axisConstraint: 0
   - localizationKey: 
     keyword: Stop
-    keyCode: 291
+    keyCode: 290
     action:
       id: 0
       description: None
       axisConstraint: 0
   - localizationKey: 
     keyword: Introduction
-    keyCode: 292
+    keyCode: 291
     action:
       id: 0
       description: None
       axisConstraint: 0
   - localizationKey: 
     keyword: What's the time
+    keyCode: 292
+    action:
+      id: 0
+      description: None
+      axisConstraint: 0
+  - localizationKey: 
+    keyword: Calibrate
     keyCode: 293
     action:
       id: 0
       description: None
       axisConstraint: 0
   - localizationKey: 
-    keyword: Hey maps
-    keyCode: 289
+    keyword: Help
+    keyCode: 0
     action:
       id: 0
       description: None

@@ -21,168 +21,84 @@ public class dialog_google_maps : MonoBehaviour
     public IO_Setup io_setup;
 
     private string IP;
-    // Start is called before the first frame update
-    public void Start()
-    {
-        Debug.Log("Starting dialog flow...");
-        StartCoroutine(DialogFlow());
-    }
 
-    private IEnumerator DialogFlow()
+    public async Task Navigator(string userSpeech)
     {
-        // Play sound to show listener is active
-        PlaySound(listenerActiveSound);
-        while (true)
+        var responseText = await GetNewDirectionsFromServer(userSpeech);
+        string mainInstructions = responseText.main_instructions;
+        Debug.Log("Server response: " + mainInstructions);
+
+        // Play main instructions (e.g., go to tram stop, take tram, etc.)
+        await io_setup.PlayTextToSpeech(mainInstructions);
+
+        if (responseText.stop_coordinates == null)
         {
-            Debug.Log("_io_setup: " + io_setup);
-            // Simulate speech-to-text process (replace with actual Speech to Text logic)
-            var userSpeechTask = io_setup.GetRecognizedSpeechAsync();
-            yield return new WaitUntil(() => userSpeechTask.IsCompleted);
-            string userSpeech = userSpeechTask.Result;
-
-            if (userSpeech != null)
-            {
-                Debug.Log("User said: " + userSpeech);
-
-                // Check if the user wants to abort the flow (exact match)
-                string lowerCaseSpeech = userSpeech.ToLower().Trim(); // Normalize the input
-                if (lowerCaseSpeech == "break." ||
-                    lowerCaseSpeech == "abort." ||
-                    lowerCaseSpeech == "stop." ||
-                    lowerCaseSpeech == "end.")
-                {
-                    Debug.Log("Aborting dialog flow as per user request.");
-                    PlaySound(listenerInactiveSound);
-                    yield break; // Exit the coroutine
-                }
-                if (lowerCaseSpeech.Contains("take me to")) {
-                    var responseTextTask = GetNewDirectionsFromServer(userSpeech);
-                    yield return new WaitUntil(() => responseTextTask.IsCompleted);
-                    string mainInstructions = responseTextTask.Result.main_instructions;
-                    Debug.Log("Server response: " + mainInstructions);
-
-                    // Play main instructions (go to tram stop, take tram at ..., ...)
-                    var playTextToSpeechTask = io_setup.PlayTextToSpeech(mainInstructions);
-                    yield return new WaitUntil(() => playTextToSpeechTask.IsCompleted);
-
-                    if (responseTextTask.Result?.stop_coordinates == null)
-                    {
-                        Debug.Log("No stops found!");
-                        yield break;
-                    }
-
-                    List<Stop> stops = responseTextTask.Result.stop_coordinates;
-                    int currentStopIndex = 0;
-
-                    while (currentStopIndex < stops.Count) {
-                        // go over each tram stop, and play subinstructions for walking to the tram stop
-                        var playQuestionTask = io_setup.PlayTextToSpeech("Would you like instructions to the next tram stop?");
-                        yield return new WaitUntil(() => playQuestionTask.IsCompleted);
-
-                        var userInputTask = io_setup.GetRecognizedSpeechAsync();
-                        yield return new WaitUntil(() => userInputTask.IsCompleted);
-                        string userInput = userInputTask.Result;
-                        userInput = userInput.ToLower().Trim();
-
-                        if (userInput.Contains("yes"))
-                        {
-                            // calculate subdirections to next tram stop
-                            string currentStopCoords = stops[currentStopIndex].gps_coords;
-                            var serverResponseTask = GetSubDirectionsFromServer(currentStopCoords);
-                            yield return new WaitUntil(() => serverResponseTask.IsCompleted);
-                            List<SubDirection> subDirections = serverResponseTask.Result.subinstructions;
-
-                            int currentSubDirectionIndex = 0;
-                            while (currentSubDirectionIndex < subDirections.Count)
-                            {
-                                // go over each subdirection (to the tramstop). a subdirection can be: "Walk straight for 10 meters."
-                                string currentSubInstruction = subDirections[currentSubDirectionIndex].instruction;
-                                var playSubInstructionTask = io_setup.PlayTextToSpeech(currentSubInstruction);
-                                yield return new WaitUntil(() => playSubInstructionTask.IsCompleted);
-
-                                // the current distance in meters to the next waypoint. set it to a large number so the while loop starts
-                                float distanceToTarget = 1000;
-                                float threshold = 3;
-                                float originalDistanceToTarget = subDirections[currentSubDirectionIndex].distance;
-                                // compare current GPS coordinates to target GPS coordinates (of the subinstruction), on server
-                                // only if we reach target GPS coordinates, we play the next subinstruction
-                                while (distanceToTarget > threshold)
-                                {
-                                    var CompareGPSTask = CompareGPSonServer(subDirections[currentSubDirectionIndex].gps_lat, subDirections[currentSubDirectionIndex].gps_lng);
-                                    yield return new WaitUntil(() => CompareGPSTask.IsCompleted);
-
-                                    distanceToTarget = CompareGPSTask.Result.distance_to_target;
-
-                                    // if current distance to target is more than 10 meters to the original estimated distance, warn the user
-                                    if (distanceToTarget > (originalDistanceToTarget + 10.0))
-                                    {
-                                        var playFeedbackTask = io_setup.PlayTextToSpeech("Looks like you went off the route. Let me give you new instructions.");
-                                        yield return new WaitUntil(() => playFeedbackTask.IsCompleted);
-
-                                        //TODO: get new directions to the next waypoint subDirections[currentSubDirectionIndex].gps_lat and gps_lng
-                                    }
-
-                                    // TODO: when user says stop/break/quit, stop. below doesn't work :((
-                                    var userSpeechStopTask = io_setup.GetRecognizedSpeechAsync();
-                                    yield return new WaitUntil(() => userSpeechStopTask.IsCompleted);
-                                    string userSpeechStop = userSpeechStopTask.Result;
-                                    userSpeechStop = userSpeechStop.ToLower().Trim(); // Normalize the input
-                                    if (lowerCaseSpeech == "break." ||
-                                        lowerCaseSpeech == "abort." ||
-                                        lowerCaseSpeech == "stop." ||
-                                        lowerCaseSpeech == "end.")
-                                    {
-                                        Debug.Log("Aborting dialog flow as per user request.");
-                                        PlaySound(listenerInactiveSound);
-                                        yield break; // Exit the coroutine
-                                    }
-                                }
-                                // we have reached next target/waypoint on the way to the tram stop
-                                currentSubDirectionIndex++;
-                            }
-
-                            var playTramStopTask = io_setup.PlayTextToSpeech("Great, you have arrived to " + stops[currentStopIndex].name + "!");
-                            yield return new WaitUntil(() => playTramStopTask.IsCompleted);
-
-                            // if we are at a tram stop, say also what time the tram is coming
-                            // TODO: transform time into minutes
-                            // TODO: calculate next tram if we missed the original tram?
-                            if (currentStopIndex != stops.Count - 1)
-                            {
-                                var playTramTimeTask = io_setup.PlayTextToSpeech("Your tram is at " + stops[currentStopIndex].departure_time + ".");
-                                yield return new WaitUntil(() => playTramTimeTask.IsCompleted);
-                            }
-
-                            // go to next tram stop / destination
-                            ++currentStopIndex;
-                            // TODO: if user says stop, break, etc
-
-                        }
-                        else{
-                            Debug.Log("Aborting dialog flow as per user request.");
-                            PlaySound(listenerInactiveSound);
-                            yield break; // Exit the coroutine
-                        }
-
-                    }
-
-                }
-                if (lowerCaseSpeech.Contains("repeat")) {
-                    //TODO
-                }
-            }
-            else
-            {
-                Debug.Log("No speech recognized.");
-                // Play sound indicating speech input is complete
-                PlaySound(listenerInactiveSound);
-                break;
-            }
+            Debug.Log("No stops found!");
+            return;
         }
 
+        List<Stop> stops = responseText.stop_coordinates;
+        int currentStopIndex = 0;
 
+        while (currentStopIndex < stops.Count)
+        {
+            await io_setup.PlayTextToSpeech("Would you like instructions to the next tram stop?");
+            string userInput = (await io_setup.GetRecognizedSpeechAsync()).ToLower().Trim();
 
+            if (userInput.Contains("yes"))
+            {
+                string currentStopCoords = stops[currentStopIndex].gps_coords;
+                var subDirectionsResponse = await GetSubDirectionsFromServer(currentStopCoords);
+                List<SubDirection> subDirections = subDirectionsResponse.subinstructions;
+
+                int currentSubDirectionIndex = 0;
+                while (currentSubDirectionIndex < subDirections.Count)
+                {
+                    string currentSubInstruction = subDirections[currentSubDirectionIndex].instruction;
+                    await io_setup.PlayTextToSpeech(currentSubInstruction);
+
+                    float distanceToTarget = 1000;
+                    float threshold = 3;
+                    float originalDistanceToTarget = subDirections[currentSubDirectionIndex].distance;
+
+                    while (distanceToTarget > threshold)
+                    {
+                        var gpsComparison = await CompareGPSonServer(
+                            subDirections[currentSubDirectionIndex].gps_lat,
+                            subDirections[currentSubDirectionIndex].gps_lng
+                        );
+
+                        distanceToTarget = gpsComparison.distance_to_target;
+
+                        if (distanceToTarget > (originalDistanceToTarget + 10.0))
+                        {
+                            await io_setup.PlayTextToSpeech("Looks like you went off the route. Let me give you new instructions.");
+                            // TODO: Fetch and update new directions to the current waypoint.
+                        }
+
+                        string userSpeechStop = (await io_setup.GetRecognizedSpeechAsync()).ToLower().Trim();
+                        if (userSpeechStop == "break" || userSpeechStop == "abort" || userSpeechStop == "stop" || userSpeechStop == "end")
+                        {
+                            Debug.Log("Aborting dialog flow as per user request.");
+                            // PlaySound(listenerInactiveSound); // Add this if there's a relevant sound to play
+                            return;
+                        }
+                    }
+                    currentSubDirectionIndex++;
+                }
+
+                await io_setup.PlayTextToSpeech($"Great, you have arrived at {stops[currentStopIndex].name}!");
+
+                if (currentStopIndex != stops.Count - 1)
+                {
+                    await io_setup.PlayTextToSpeech($"Your tram is at {stops[currentStopIndex].departure_time}.");
+                }
+
+                currentStopIndex++;
+            }
+        }
     }
+
 
     private void PlaySound(AudioClip sound) // Play a sound 
     {

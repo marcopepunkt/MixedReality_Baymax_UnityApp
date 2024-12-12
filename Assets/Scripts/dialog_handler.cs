@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 
 
@@ -20,67 +21,83 @@ public class dialog_handler : MonoBehaviour
     [SerializeField]
     private float volume = 0.8f; // Just the volume of the sound
 
+
+    public dialog_google_maps dialog_google_maps;
+
     public IO_Setup io_setup;
     private string IP;
 
-  
+    private bool isDialogFlowRunning = false;
 
-    public void StartDialog()
-    {
-        Debug.Log("Starting dialog flow...");
-        StartCoroutine(DialogFlow());
-        
-    }
 
-    private IEnumerator DialogFlow()
+    public void StartDialogFlow()
     {
-        // Play sound to show listener is active
-        PlaySound(listenerActiveSound);
-        while (true)
+        if (isDialogFlowRunning)
         {
-            Debug.Log("_io_setup: " + io_setup);
-            // Simulate speech-to-text process (replace with actual Speech to Text logic)
-            var userSpeechTask = io_setup.GetRecognizedSpeechAsync();
-            yield return new WaitUntil(() => userSpeechTask.IsCompleted);
-            string userSpeech = userSpeechTask.Result;
-
-            if (userSpeech != null)
-            {
-                Debug.Log("User said: " + userSpeech);
-
-                // Check if the user wants to abort the flow (exact match)
-                string lowerCaseSpeech = userSpeech.ToLower().Trim(); // Normalize the input
-                if (lowerCaseSpeech == "break." ||
-                    lowerCaseSpeech == "abort." ||
-                    lowerCaseSpeech == "stop."  ||
-                    lowerCaseSpeech == "end.")
-                {
-                    Debug.Log("Aborting dialog flow as per user request.");
-                    PlaySound(listenerInactiveSound);
-                    yield break; // Exit the coroutine
-                }
-                    // Handle the request with the input
-                    var responseTextTask = SendToServerAndGetResponse(userSpeech);
-                yield return new WaitUntil(() => responseTextTask.IsCompleted);
-                string responseText = responseTextTask.Result;
-                Debug.Log("Server response: " + responseText);
-                // Play the response using TTS
-                var playTextToSpeechTask = io_setup.PlayTextToSpeech(responseText);
-                yield return new WaitUntil(() => playTextToSpeechTask.IsCompleted);
-                PlaySound(listenerActiveSound);
-            }
-            else
-            {
-                Debug.Log("No speech recognized.");
-                // Play sound indicating speech input is complete
-                PlaySound(listenerInactiveSound);
-                break;
-            }
+            Debug.LogWarning("Dialog flow is already running.");
+            return;
         }
 
-
-        
+        isDialogFlowRunning = true;
+        DialogFlow();
     }
+
+    public async Task DialogFlow()
+    {
+        try
+        {
+            // Your DialogFlow logic here
+            PlaySound(listenerActiveSound);
+            while (true)
+            {
+                Debug.Log("_io_setup: " + io_setup);
+                string userSpeech = await io_setup.GetRecognizedSpeechAsync();
+                if (userSpeech != null)
+                {
+                    Debug.Log("User said: " + userSpeech);
+
+                    string lowerCaseSpeech = userSpeech.ToLower().Trim();
+                    if (lowerCaseSpeech == "break." || lowerCaseSpeech == "abort." ||
+                        lowerCaseSpeech == "stop." || lowerCaseSpeech == "end.")
+                    {
+                        Debug.Log("Aborting dialog flow as per user request.");
+                        PlaySound(listenerInactiveSound);
+                        break;
+                    }
+
+                    if (lowerCaseSpeech.Contains("take me to"))
+                    {
+                        Debug.Log("Initialized Google Maps navigation.");
+                        await dialog_google_maps.Navigator(userSpeech);
+                        break;
+                    }
+                    else
+                    {
+                        string responseText = await SendToServerAndGetResponse(userSpeech);
+                        Debug.Log("Server response: " + responseText);
+
+                        await io_setup.PlayTextToSpeech(responseText);
+                        PlaySound(listenerActiveSound);
+                    }
+                }
+                else
+                {
+                    Debug.Log("No speech recognized.");
+                    PlaySound(listenerInactiveSound);
+                    break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Error in DialogFlow: " + ex.Message);
+        }
+        finally
+        {
+            isDialogFlowRunning = false; // Reset the flag
+        }
+    }
+
 
     private void PlaySound(AudioClip sound) // Play a sound 
     {

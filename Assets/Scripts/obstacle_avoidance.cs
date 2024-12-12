@@ -23,9 +23,12 @@ public class obstacle_avoidance : MonoBehaviour
     [SerializeField]
     private AudioClip mid_prio_object;
 
-    public GameObject modelParent = null;
+    [SerializeField]
+    public GameObject headGameObject;
 
-    private bool running = true;
+    public GameObject woldGameObject;
+
+    private bool running = false;
     private string serverUrl = null;
 
     [System.Serializable]
@@ -45,16 +48,72 @@ public class obstacle_avoidance : MonoBehaviour
         public List<Transformation> transformations;
     }
 
+
+
     public async void start_detection()
     {
+        Transform globalTransform = woldGameObject.transform;
+        Vector3 globalPosition = globalTransform.position;
+        Quaternion globalRotation = globalTransform.rotation;
+        Debug.Log($"Global Position: {globalPosition}, Global Rotation: {globalRotation.eulerAngles}");
+
+        string initstreamsUrl = io_Setup.IP + "/initialize_streams";
+        using (UnityWebRequest www = UnityWebRequest.Get(initstreamsUrl))
+        {
+            // Send the request and await completion
+            await SendWebRequestAsync(www);
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Failed to connect: " + www.error);
+            }
+            else
+            {
+                Debug.Log("Streams Initialized");
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
+
+        // Log the pose
+        if (running) {
+            Debug.Log("Obstacle avoidance already running");
+            return;
+        }
         running = true;
         await io_Setup.PlayTextToSpeech("Starting obstacle avoidance");
+        Debug.Log("Starting the obstacle avoidance loop");
+
+
+        
+        Transform headTransform = headGameObject.transform;
+        Vector3 headPosition = headTransform.position;
+        Quaternion headRotation = headTransform.rotation;
         while (running)
         {
-            Debug.Log("Detect command recognized!");
+            // Show the Head Pose for Debugging
+            headPosition = headTransform.position;
+            headRotation = headTransform.rotation;
+            Debug.Log($"Head Position: {headPosition}, Head Rotation: {headRotation.eulerAngles}");
             await detect();
-            await Task.Delay(200);
         }// Call your function here
+
+        string endstreamsUrls = io_Setup.IP + "/stop_streams";
+        using (UnityWebRequest www = UnityWebRequest.Get(endstreamsUrls))
+        {
+            // Send the request and await completion
+            await SendWebRequestAsync(www);
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Failed to connect: " + www.error);
+            }
+            else
+            {
+                Debug.Log("Streams Initialized");
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
+
         await io_Setup.PlayTextToSpeech("Ended obstacle avoidance");
     }
 
@@ -64,12 +123,33 @@ public class obstacle_avoidance : MonoBehaviour
         ClearPreviousTransformations();
     }
 
+    public async void calibrate()
+    {
+        serverUrl = io_Setup.IP + "/calibrate_detector";
+        Debug.Log("CreatedWebReqest for Calibration");
+        using (UnityWebRequest www = UnityWebRequest.Get(serverUrl))
+        {
+            // Send the request and await completion
+            await SendWebRequestAsync(www);
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Failed to connect: " + www.error);
+            }
+            else
+            {
+                Debug.Log("Called Calibrator");
+                Debug.Log(www.downloadHandler.text);
+            }
+        }
+    }
+
 
     private async Task detect()
     {
         serverUrl = io_Setup.IP + "/collision";
 
-        Debug.Log("CreatedWebRequest");
+        Debug.Log("Created WebRequest");
         using (UnityWebRequest www = UnityWebRequest.Get(serverUrl))
         {
             // Send the request and await completion
@@ -81,6 +161,12 @@ public class obstacle_avoidance : MonoBehaviour
             }
             else
             {
+                if (www.responseCode == 204)
+                {
+                    Debug.Log("Received 204 No Content: No transformations to process.");
+                    return; // Exit early as there's no data to process
+                }
+
                 // Parse JSON response
                 string jsonResponse = "{\"transformations\":" + www.downloadHandler.text + "}";
                 TransformationList transformationList = JsonUtility.FromJson<TransformationList>(jsonResponse);
@@ -88,8 +174,7 @@ public class obstacle_avoidance : MonoBehaviour
                 // Visualize the transformations
                 await VisualizeTransformations(transformationList.transformations);
 
-                // Clear any previous visualizations
-                //ClearPreviousTransformations();
+                // Here, now add that objects that are very close to replace itself
             }
         }
     }
@@ -117,7 +202,7 @@ public class obstacle_avoidance : MonoBehaviour
         {
             // Create a primitive object (cube) to represent the detected object
             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            obj.transform.SetParent(modelParent.transform, false); // Ensure world position is retained
+            obj.transform.SetParent(woldGameObject.transform, false); // Ensure world position is retained
 
 
             obj.transform.position = new Vector3(transformation.x, transformation.y, transformation.z);
@@ -185,10 +270,10 @@ public class obstacle_avoidance : MonoBehaviour
 
     void ClearPreviousTransformations()
     {
-        if (modelParent != null)
+        if (woldGameObject != null)
         {
             // Destroy all existing children of the parent object
-            foreach (Transform child in modelParent.transform)
+            foreach (Transform child in woldGameObject.transform)
             {
                 Destroy(child.gameObject);
             }
