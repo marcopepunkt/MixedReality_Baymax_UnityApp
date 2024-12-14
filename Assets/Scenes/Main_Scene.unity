@@ -1734,6 +1734,22 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+  - keyword: Abort
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 322570576}
+          m_TargetAssemblyTypeName: IO_Setup, Assembly-CSharp
+          m_MethodName: StopTextToSpeech
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   persistentKeywords: 0
   speechConfirmationTooltipPrefab: {fileID: 8046114618238072051, guid: 271778f6c957b524981067a81d238394, type: 3}
 --- !u!4 &1799431593

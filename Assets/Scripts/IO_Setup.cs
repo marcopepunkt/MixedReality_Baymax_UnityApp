@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.Networking;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class IO_Setup : MonoBehaviour
 {
@@ -76,7 +77,9 @@ public class IO_Setup : MonoBehaviour
     }
 
 
-    private bool isPlaying = false;
+    private Coroutine ttsCoroutine; // Reference to the active coroutine
+    private bool isPlaying = false; // Indicates if TTS is playing
+    private bool isCanceled = false; // Indicates if TTS should be canceled
 
     public async Task PlayTextToSpeech(string text)
     {
@@ -86,24 +89,83 @@ public class IO_Setup : MonoBehaviour
             return;
         }
 
-        isPlaying = true; // Set the flag
+        isPlaying = true;
+        isCanceled = false;
 
         try
         {
-            var result = await synthesizer.SpeakTextAsync(text);
+            var tcs = new TaskCompletionSource<bool>();
 
-            if (result.Reason == ResultReason.SynthesizingAudioCompleted)
+            // Start the coroutine and pass the TaskCompletionSource
+            ttsCoroutine = StartCoroutine(SynthesizeSpeechCoroutine(text, tcs));
+
+            // Await the completion of the coroutine
+            await tcs.Task;
+
+            if (isCanceled)
             {
-                Debug.Log("Speech synthesis succeeded!");
+                Debug.Log("Speech synthesis was canceled.");
             }
             else
             {
-                Debug.LogError($"Speech synthesis failed: {result.Reason}");
+                Debug.Log("Speech synthesis completed successfully.");
             }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error during speech synthesis: {ex.Message}");
         }
         finally
         {
-            isPlaying = false; // Reset the flag
+            isPlaying = false;
+        }
+    }
+
+    private IEnumerator SynthesizeSpeechCoroutine(string text, TaskCompletionSource<bool> tcs)
+    {
+        var task = synthesizer.SpeakTextAsync(text);
+
+        while (!task.IsCompleted)
+        {
+            if (isCanceled)
+            {
+                try
+                {
+                    // Stop the synthesizer if canceled
+                    synthesizer.StopSpeakingAsync().Wait();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error stopping synthesizer: {ex.Message}");
+                }
+
+                tcs.SetResult(false); // Notify cancellation
+                yield break; // Exit the coroutine
+            }
+
+            yield return null; // Wait for the next frame
+        }
+
+        // Handle task completion or failure outside the `while` loop
+        if (task.Status == TaskStatus.RanToCompletion && task.Result.Reason == ResultReason.SynthesizingAudioCompleted)
+        {
+            tcs.SetResult(true); // Notify success
+        }
+        else if (task.IsFaulted)
+        {
+            Debug.LogError($"Speech synthesis failed: {task.Exception?.Message}");
+            tcs.SetException(task.Exception); // Notify failure
+        }
+    }
+
+
+    public void StopTextToSpeech()
+    {
+        if (ttsCoroutine != null)
+        {
+            isCanceled = true; // Set the cancellation flag
+
+            Debug.Log("Speech synthesis stop requested.");
         }
     }
 
