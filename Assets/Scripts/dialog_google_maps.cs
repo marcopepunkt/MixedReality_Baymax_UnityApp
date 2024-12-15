@@ -77,13 +77,22 @@ public class dialog_google_maps : MonoBehaviour
                         }
 
                         string userSpeechStop = (await io_setup.GetRecognizedSpeechAsync()).ToLower().Trim();
-                        if (userSpeechStop == "break" || userSpeechStop == "abort" || userSpeechStop == "stop" || userSpeechStop == "end")
+                        if (userSpeechStop.Contains("break") || userSpeechStop.Contains("abort") || userSpeechStop.Contains("stop") || userSpeechStop.Contains("end"))
                         {
                             Debug.Log("Aborting dialog flow as per user request.");
-                            // PlaySound(listenerInactiveSound); // Add this if there's a relevant sound to play
+                            PlaySound(listenerInactiveSound); // Add this if there's a relevant sound to play
                             return;
                         }
                     }
+
+                    userSpeech = (await io_setup.GetRecognizedSpeechAsync()).ToLower().Trim();
+                    if (userSpeech.Contains("break") || userSpeech.Contains("abort") || userSpeech.Contains("stop") || userSpeech.Contains("end"))
+                    {
+                        Debug.Log("Aborting dialog flow as per user request.");
+                        PlaySound(listenerInactiveSound); // Add this if there's a relevant sound to play
+                        return;
+                    }
+
                     currentSubDirectionIndex++;
                 }
 
@@ -96,6 +105,7 @@ public class dialog_google_maps : MonoBehaviour
 
                 currentStopIndex++;
             }
+            else return;
         }
     }
 
