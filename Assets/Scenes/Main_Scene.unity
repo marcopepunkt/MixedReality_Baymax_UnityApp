@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -653,6 +653,168 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &407221241
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1942642477}
+    m_Modifications:
+    - target: {fileID: 185024197, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 355.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 185024197, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -65
+      objectReference: {fileID: 0}
+    - target: {fileID: 185024197, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -104
+      objectReference: {fileID: 0}
+    - target: {fileID: 185024198, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Text
+      value: 'For obstacle avoidance: "Start". To End the obstacle Avoidance say
+        "Stop". '
+      objectReference: {fileID: 0}
+    - target: {fileID: 214481037, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Text
+      value: 'To hide this window: "Hide"'
+      objectReference: {fileID: 0}
+    - target: {fileID: 250162174, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -155
+      objectReference: {fileID: 0}
+    - target: {fileID: 250162175, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Text
+      value: 'To quit any user mode: "Stop", "Abort"'
+      objectReference: {fileID: 0}
+    - target: {fileID: 384636250, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Text
+      value: Say "Help" or "Introduction" for a tutorial on voice commands.
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001918679, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 82.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001918680, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Text
+      value: Say "Hey Baymax!" to start a conversation and ask me anything about
+        the environment. You can end the conversation by saying "Abort".
+      objectReference: {fileID: 0}
+    - target: {fileID: 1662089109, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4b99232473b14194b80b1665d2833cb9, type: 3}
+    - target: {fileID: 1926716831, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -38
+      objectReference: {fileID: 0}
+    - target: {fileID: 1926716832, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Text
+      value: 'For Google Maps: "Hey Baymax, take me to ..."
+
+        Say "Abort"
+        to end the Conversation.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 2006540023, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7af705585d903de4f944cfccbc512b9f, type: 3}
+    - target: {fileID: 8273055237977850445, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238145602349, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.419
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531421, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Name
+      value: Intro Screen
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531423, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: buttonBehavior
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531423, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: autoFollowDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531423, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: autoFollowAtDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055238410531423, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: autoFollowTransformTarget
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8273055239604189146, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+--- !u!4 &407221242 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8273055238410531420, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+  m_PrefabInstance: {fileID: 407221241}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &407221243 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1421989393, guid: fbd5d6469aa568d49ba37854e988a7ce, type: 3}
+  m_PrefabInstance: {fileID: 407221241}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b33677cd842574d9f36853e8696e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &446603216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1933,7 +2095,7 @@ Transform:
   m_GameObject: {fileID: 1257616994}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.361}
-  m_LocalScale: {x: 0.08, y: 0.08, z: 0.1}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.1}
   m_Children:
   - {fileID: 1283953329}
   m_Father: {fileID: 963194228}
@@ -2081,7 +2243,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -1.26}
   m_SizeDelta: {x: 734, y: 346.66666}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1492254648
@@ -2258,6 +2420,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 407221243}
+          m_TargetAssemblyTypeName: Show_Config, Assembly-CSharp
+          m_MethodName: Hide
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - keyword: Start
     response:
       m_PersistentCalls:
@@ -2265,6 +2439,18 @@ MonoBehaviour:
         - m_Target: {fileID: 322570577}
           m_TargetAssemblyTypeName: obstacle_avoidance, Assembly-CSharp
           m_MethodName: start_detection
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 407221243}
+          m_TargetAssemblyTypeName: Show_Config, Assembly-CSharp
+          m_MethodName: Hide
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -2290,6 +2476,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 322570576}
+          m_TargetAssemblyTypeName: IO_Setup, Assembly-CSharp
+          m_MethodName: StopTextToSpeech
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - keyword: Introduction
     response:
       m_PersistentCalls:
@@ -2297,6 +2495,18 @@ MonoBehaviour:
         - m_Target: {fileID: 322570578}
           m_TargetAssemblyTypeName: give_introduction, Assembly-CSharp
           m_MethodName: introduce_the_app
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 407221243}
+          m_TargetAssemblyTypeName: Show_Config, Assembly-CSharp
+          m_MethodName: Show
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -2354,6 +2564,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 407221243}
+          m_TargetAssemblyTypeName: Show_Config, Assembly-CSharp
+          m_MethodName: Show
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - keyword: Abort
     response:
       m_PersistentCalls:
@@ -2361,6 +2583,38 @@ MonoBehaviour:
         - m_Target: {fileID: 322570576}
           m_TargetAssemblyTypeName: IO_Setup, Assembly-CSharp
           m_MethodName: StopTextToSpeech
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - keyword: Hide
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 407221243}
+          m_TargetAssemblyTypeName: Show_Config, Assembly-CSharp
+          m_MethodName: Hide
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - keyword: Show
+    response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 407221243}
+          m_TargetAssemblyTypeName: Show_Config, Assembly-CSharp
+          m_MethodName: Show
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -2418,9 +2672,9 @@ RectTransform:
   m_Father: {fileID: 8348155387963190724}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -76.335}
   m_SizeDelta: {x: 200, y: 22.67}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1855168153
@@ -2666,7 +2920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6325399774208577938, guid: a5963062303351340bc3be5f71890d29, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6325399774208577939, guid: a5963062303351340bc3be5f71890d29, type: 3}
       propertyPath: m_RootOrder
@@ -2813,6 +3067,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 556360060}
+  - {fileID: 407221242}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2893,6 +3148,133 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046280187}
   m_CullTransparentMesh: 1
+--- !u!1 &2144783330
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2144783332}
+  - component: {fileID: 2144783331}
+  m_Layer: 0
+  m_Name: TempAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &2144783331
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144783330}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 45ab465e462644d40aee6385528abe36, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.8
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &2144783332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144783330}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5937843704604389421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3309,9 +3691,9 @@ RectTransform:
   m_Father: {fileID: 8348155387963190724}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -50}
   m_SizeDelta: {x: 360, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8348155388561660319
@@ -3427,9 +3809,9 @@ RectTransform:
   m_Father: {fileID: 8348155387963190724}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -23.665}
   m_SizeDelta: {x: 200, y: 22.67}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8348155388619845649
