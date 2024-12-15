@@ -203,7 +203,7 @@ public class obstacle_avoidance : MonoBehaviour
 
             obj.GetComponent<Renderer>().material.color = Color.white; // Obstacle
 
-            obj.transform.localScale = new Vector3(0.2f, 0.5f, 0.2f);
+            obj.transform.localScale = new Vector3(0.35f, 0.8f, 0.35f);
 
             if (sound)
             {
