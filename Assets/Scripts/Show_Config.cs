@@ -21,4 +21,13 @@ public class Show_Config : MonoBehaviour
         }
     }
 
+    public void Hide()
+    {
+        targetObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        targetObject.SetActive(true);
+    }
 }
