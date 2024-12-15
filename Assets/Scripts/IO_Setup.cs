@@ -15,7 +15,8 @@ public class IO_Setup : MonoBehaviour
     public Text Input_IP = null;
 
     [SerializeField]
-    public string IP = "http://127.0..1:5000"; // URL of your Flask server
+    //public string IP = "http://127.0..1:5000"; // URL of your Flask server
+    public string IP = "http://127.0.0.1:5000";
 
     [SerializeField]
     public string azureKey = "None";
@@ -25,6 +26,35 @@ public class IO_Setup : MonoBehaviour
     public SpeechRecognizer recognizer;
     private SpeechConfig config;
 
+    [Header("Speech Visualization")]
+    [SerializeField, Tooltip("Text component to display speech-to-text output")]
+    private TextMeshProUGUI speechToTextDisplay;
+    [SerializeField, Tooltip("Text component to display text-to-speech input")]
+    private TextMeshProUGUI textToSpeechDisplay;
+    [SerializeField, Tooltip("Panel containing speech-to-text elements")]
+    private GameObject speechToTextPanel;
+    [SerializeField, Tooltip("Panel containing text-to-speech elements")]
+    private GameObject textToSpeechPanel;
+
+    [Header("UI Positioning")]
+    [SerializeField, Tooltip("Distance from the camera (in meters)")]
+    private float distanceFromCamera = 2f;
+    [SerializeField, Tooltip("Vertical offset from camera center (in meters)")]
+    private float verticalOffset = -0.2f;
+
+    [Header("Visual Settings")]
+    [SerializeField]
+    private int maxHistoryLines = 5;
+    [SerializeField]
+    private float textDisplayDuration = 3.0f;
+
+    private string speechToTextHistory = "";
+    private float lastUpdateTime;
+    private Camera mainCamera;
+    private Transform canvasTransform;
+    private Coroutine ttsCoroutine;
+    private bool isPlaying = false;
+    private bool isCanceled = false;
 
 
 
@@ -47,8 +77,94 @@ public class IO_Setup : MonoBehaviour
         {
             Debug.LogError("Speech recognizer not initialized!");
         }
+        // Initialize visualization
+        mainCamera = Camera.main;
+        canvasTransform = GetComponentInParent<Canvas>()?.transform;
+        if (speechToTextDisplay != null)
+        {
+            speechToTextDisplay.text = "";
+        }
 
+        if (textToSpeechDisplay != null)
+        {
+            textToSpeechDisplay.text = "";
+        }
         Visualization_IP.text = IP;
+
+    }
+
+    private void LateUpdate()
+    {
+        UpdateCanvasPosition();
+
+        // Auto-hide panels after duration
+        if (Time.time - lastUpdateTime > textDisplayDuration)
+        {
+            if (speechToTextPanel != null && !isPlaying)
+            {
+                speechToTextPanel.SetActive(false);
+            }
+
+            if (textToSpeechPanel != null && !isPlaying)
+            {
+                textToSpeechPanel.SetActive(false);
+            }
+        }
+    }
+
+    private void UpdateCanvasPosition()
+    {
+        if (mainCamera != null && canvasTransform != null)
+        {
+            Vector3 position = mainCamera.transform.position +
+                             mainCamera.transform.forward * distanceFromCamera +
+                             mainCamera.transform.up * verticalOffset;
+
+            canvasTransform.position = position;
+            canvasTransform.rotation = Quaternion.LookRotation(
+                canvasTransform.position - mainCamera.transform.position);
+        }
+    }
+
+    // Visualization update methods
+    public void UpdateSpeechToTextDisplay(string recognizedText)
+    {
+        if (speechToTextDisplay != null)
+        {
+            speechToTextHistory = AddToHistory(speechToTextHistory, recognizedText);
+            speechToTextDisplay.text = speechToTextHistory;
+            lastUpdateTime = Time.time;
+
+            if (speechToTextPanel != null)
+            {
+                speechToTextPanel.SetActive(true);
+            }
+        }
+    }
+
+    public void UpdateTextToSpeechDisplay(string textToSpeak)
+    {
+        if (textToSpeechDisplay != null)
+        {
+            textToSpeechDisplay.text = textToSpeak;
+            lastUpdateTime = Time.time;
+
+            if (textToSpeechPanel != null)
+            {
+                textToSpeechPanel.SetActive(true);
+            }
+        }
+    }
+
+    private string AddToHistory(string history, string newText)
+    {
+        string updatedHistory = string.IsNullOrEmpty(history) ? newText : history + "\n" + newText;
+        string[] lines = updatedHistory.Split('\n');
+        if (lines.Length > maxHistoryLines)
+        {
+            updatedHistory = string.Join("\n", lines, lines.Length - maxHistoryLines, maxHistoryLines);
+        }
+        return updatedHistory;
     }
 
     public void CHANGEIP()
@@ -77,9 +193,7 @@ public class IO_Setup : MonoBehaviour
     }
 
 
-    private Coroutine ttsCoroutine; // Reference to the active coroutine
-    private bool isPlaying = false; // Indicates if TTS is playing
-    private bool isCanceled = false; // Indicates if TTS should be canceled
+
 
     public async Task PlayTextToSpeech(string text)
     {
@@ -88,7 +202,7 @@ public class IO_Setup : MonoBehaviour
             Debug.Log("Speech synthesis is already running.");
             return;
         }
-
+        UpdateTextToSpeechDisplay(text);
         isPlaying = true;
         isCanceled = false;
 
@@ -186,16 +300,19 @@ public class IO_Setup : MonoBehaviour
         if (result.Reason == ResultReason.RecognizedSpeech)
         {
             Debug.Log($"Recognized: {result.Text}");
+            UpdateSpeechToTextDisplay(result.Text);
             return result.Text; // Return the recognized string
         }
         else if (result.Reason == ResultReason.NoMatch)
         {
             Debug.Log("Speech could not be recognized.");
+            UpdateSpeechToTextDisplay("Speech could not be recognized.");
             return null;
         }
         else if (result.Reason == ResultReason.Canceled)
         {
             Debug.LogError("Recognition canceled.");
+            UpdateSpeechToTextDisplay("Recognition canceled.");
             return null;
         }
 
