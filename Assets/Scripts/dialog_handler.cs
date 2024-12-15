@@ -57,8 +57,7 @@ public class dialog_handler : MonoBehaviour
                     Debug.Log("User said: " + userSpeech);
 
                     string lowerCaseSpeech = userSpeech.ToLower().Trim();
-                    if (lowerCaseSpeech == "break." || lowerCaseSpeech == "abort." ||
-                        lowerCaseSpeech == "stop." || lowerCaseSpeech == "end.")
+                    if (lowerCaseSpeech.Contains("abort"))
                     {
                         Debug.Log("Aborting dialog flow as per user request.");
                         PlaySound(listenerInactiveSound);

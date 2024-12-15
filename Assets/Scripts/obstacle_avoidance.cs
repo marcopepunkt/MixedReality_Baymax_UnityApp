@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using UnityEngine.Networking;
 using System;
+using static obstacle_avoidance;
 
 
 
@@ -15,18 +16,18 @@ public class obstacle_avoidance : MonoBehaviour
     public IO_Setup io_Setup;
 
     [SerializeField]
-    private AudioClip low_prio_object;
+    private AudioClip heading_clip;
     
     [SerializeField]
-    private AudioClip high_prio_object;
+    private AudioClip obstacle_clip;
     
-    [SerializeField]
-    private AudioClip mid_prio_object;
 
     [SerializeField]
     public GameObject headGameObject;
 
-    public GameObject woldGameObject;
+    public GameObject ObstaclesParentObject;
+
+    private GameObject headingObject;
 
     private bool running = false;
     private string serverUrl = null;
@@ -42,37 +43,22 @@ public class obstacle_avoidance : MonoBehaviour
         public float depth;
     }
 
+
     [System.Serializable]
-    public class TransformationList
+    public class CombinedTransformationList
     {
-        public List<Transformation> transformations;
+        public List<Transformation> heading;
+        public List<Transformation> obstacles;
     }
 
 
 
     public async void start_detection()
     {
-        Transform globalTransform = woldGameObject.transform;
+        Transform globalTransform = ObstaclesParentObject.transform;
         Vector3 globalPosition = globalTransform.position;
         Quaternion globalRotation = globalTransform.rotation;
         Debug.Log($"Global Position: {globalPosition}, Global Rotation: {globalRotation.eulerAngles}");
-
-        string initstreamsUrl = io_Setup.IP + "/initialize_streams";
-        using (UnityWebRequest www = UnityWebRequest.Get(initstreamsUrl))
-        {
-            // Send the request and await completion
-            await SendWebRequestAsync(www);
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError("Failed to connect: " + www.error);
-            }
-            else
-            {
-                Debug.Log("Streams Initialized");
-                Debug.Log(www.downloadHandler.text);
-            }
-        }
 
         // Log the pose
         if (running) {
@@ -88,6 +74,10 @@ public class obstacle_avoidance : MonoBehaviour
         Transform headTransform = headGameObject.transform;
         Vector3 headPosition = headTransform.position;
         Quaternion headRotation = headTransform.rotation;
+
+        await InitHeading();
+
+
         while (running)
         {
             // Show the Head Pose for Debugging
@@ -95,32 +85,16 @@ public class obstacle_avoidance : MonoBehaviour
             headRotation = headTransform.rotation;
             Debug.Log($"Head Position: {headPosition}, Head Rotation: {headRotation.eulerAngles}");
             await detect();
-        }// Call your function here
-
-        string endstreamsUrls = io_Setup.IP + "/stop_streams";
-        using (UnityWebRequest www = UnityWebRequest.Get(endstreamsUrls))
-        {
-            // Send the request and await completion
-            await SendWebRequestAsync(www);
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError("Failed to connect: " + www.error);
-            }
-            else
-            {
-                Debug.Log("Streams Initialized");
-                Debug.Log(www.downloadHandler.text);
-            }
         }
-
-        await io_Setup.PlayTextToSpeech("Ended obstacle avoidance");
     }
 
     public async void stop_detection()
     {
         running = false;
         ClearPreviousTransformations();
+        PauseHeading();
+        Destroy(headingObject);
+        await io_Setup.PlayTextToSpeech("Stopping obstacle avoidance");
     }
 
     public async void calibrate()
@@ -145,6 +119,7 @@ public class obstacle_avoidance : MonoBehaviour
     }
 
 
+
     private async Task detect()
     {
         serverUrl = io_Setup.IP + "/collision";
@@ -154,7 +129,6 @@ public class obstacle_avoidance : MonoBehaviour
         {
             // Send the request and await completion
             await SendWebRequestAsync(www);
-
             if (www.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("Failed to fetch transformations: " + www.error);
@@ -166,15 +140,35 @@ public class obstacle_avoidance : MonoBehaviour
                     Debug.Log("Received 204 No Content: No transformations to process.");
                     return; // Exit early as there's no data to process
                 }
+                ClearPreviousTransformations();
 
                 // Parse JSON response
-                string jsonResponse = "{\"transformations\":" + www.downloadHandler.text + "}";
-                TransformationList transformationList = JsonUtility.FromJson<TransformationList>(jsonResponse);
+                string jsonResponse = www.downloadHandler.text;
+                CombinedTransformationList combinedList = JsonUtility.FromJson<CombinedTransformationList>(jsonResponse);
 
+                Debug.Log("Received transformations: " + jsonResponse);
+                Debug.Log("Received " + combinedList.heading.Count + " heading transformations and " + combinedList.obstacles.Count + " obstacle transformations.");
+                Debug.Log(combinedList.heading);
+                Debug.Log(combinedList.obstacles);
                 // Visualize the transformations
-                await VisualizeTransformations(transformationList.transformations);
-
-                // Here, now add that objects that are very close to replace itself
+                if (combinedList.heading.Count == 0)
+                {
+                    PauseHeading();
+                    await ShowCollisions(combinedList.obstacles, sound: true);
+                }
+                else
+                {
+                    if (combinedList.obstacles.Count == 0)
+                    {
+                        await UpdateHeading(combinedList.heading);
+                    }
+                    else
+                    {
+                        Debug.Log("Showing both heading and obstacles");
+                        await ShowCollisions(combinedList.obstacles, sound: false);
+                        await UpdateHeading(combinedList.heading);
+                    }
+                }
             }
         }
     }
@@ -196,84 +190,111 @@ public class obstacle_avoidance : MonoBehaviour
     }
 
 
-    private async Task VisualizeTransformations(List<Transformation> transformations)
+    private async Task ShowCollisions(List<Transformation> transformations, bool sound)
     {
         foreach (var transformation in transformations)
-        {
+        {   
+            Debug.Log("Showing obstacle at " + transformation.x + ", " + transformation.y + ", " + transformation.z);
             // Create a primitive object (cube) to represent the detected object
             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            obj.transform.SetParent(woldGameObject.transform, false); // Ensure world position is retained
-
-
+            obj.transform.SetParent(ObstaclesParentObject.transform); // Ensure world position is retained
+            
             obj.transform.position = new Vector3(transformation.x, transformation.y, transformation.z);
 
-            // Assign color based on priority
-            switch (transformation.priority)
+            obj.GetComponent<Renderer>().material.color = Color.white; // Obstacle
+
+            obj.transform.localScale = new Vector3(0.2f, 0.5f, 0.2f);
+
+            if (sound)
             {
-                case 1:
-                    obj.GetComponent<Renderer>().material.color = Color.red; // Dangerous
-                    break;
-                case 2:
-                    obj.GetComponent<Renderer>().material.color = Color.yellow; // Caution
-                    break;
-                case 3:
-                    obj.GetComponent<Renderer>().material.color = Color.green; // Neutral
-                    break;
+                await Play_Obstacle_Sound(obj);
             }
-
-
-            obj.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
-            await PlaySpatialAudioAsync(obj,transformation.priority);
-            //string textToPlay = transformation.class_name + " at " + string.Format("{0:F1}", transformation.depth) + " meters";
-            //await io_Setup.PlayTextToSpeech(textToPlay);
-
         }
     }
 
-    private async Task PlaySpatialAudioAsync(GameObject obj, int priorityLevel)
+    private async Task UpdateHeading(List<Transformation> transformations)
     {
-        AudioClip audioClip = null;
-
-        // Determine the correct audio clip based on priority level
-        switch (priorityLevel)
+        Transformation heading_transform = transformations[0];
+        headingObject.transform.position = new Vector3(heading_transform.x, heading_transform.y, heading_transform.z);
+        // set active if iactive and play music if not playing
+        // Check if the GameObject is inactive
+        if (!headingObject.activeSelf)
         {
-            case 0:
-                audioClip = low_prio_object;
-                break;
-            case 1:
-                audioClip = mid_prio_object;
-                break;
-            case 2:
-                audioClip = high_prio_object;
-                break;
+            headingObject.SetActive(true); // Activate the GameObject
         }
 
-        if (audioClip != null)
+        AudioSource audioSource = headingObject.GetComponent<AudioSource>();
+
+        // Check if the AudioSource is not playing
+        if (audioSource != null && !audioSource.isPlaying)
         {
-            await PlayAudio(obj, audioClip);
-            // await Task.Delay(Mathf.CeilToInt(audioClip.length * 1000)); // Wait for audio to complete
+            audioSource.Play(); // Play the audio
         }
+        
     }
-    private async Task PlayAudio(GameObject obj, AudioClip audio)
+
+    private async Task InitHeading()
     {
-        if (audio != null)
+        // Create a primitive object (cube) to represent the detected object
+        headingObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        headingObject.SetActive(false);
+
+        // Ensure world position is retained
+        headingObject.transform.position = new Vector3(0f,0f,0f);
+        headingObject.GetComponent<Renderer>().material.color = Color.blue; // Goal
+
+        headingObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        
+
+        AudioSource audioSource = headingObject.AddComponent<AudioSource>();
+        audioSource.clip = heading_clip;
+        audioSource.loop = true;
+        audioSource.spatialBlend = 1.0f; // Full 3D audio
+        audioSource.maxDistance = 10.0f; // Max distance for audio falloff
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+
+
+
+    }
+
+    private async Task PauseHeading()
+    {
+        AudioSource audioSource = headingObject.GetComponent<AudioSource>();
+        if (audioSource != null && audioSource.isPlaying)
         {
-            AudioSource audioSource = obj.AddComponent<AudioSource>();
-            audioSource.clip = audio;
-            audioSource.volume = 1f; // Ensure volume is between 0 and 1
-            audioSource.spatialBlend = 1.0f; // Full 3D audio
-            audioSource.maxDistance = 10.0f; // Max distance for audio falloff
-            audioSource.rolloffMode = AudioRolloffMode.Linear;
-            audioSource.Play();
+            audioSource.Stop();
         }
+
+        // Deactivate the GameObject
+        headingObject.SetActive(false);
+
+    }
+
+   
+    private async Task Play_Obstacle_Sound(GameObject obj)
+    {
+        AudioSource audioSource = obj.AddComponent<AudioSource>();
+        audioSource.clip = obstacle_clip;
+        audioSource.volume = 1f; // Ensure volume is between 0 and 1
+        audioSource.spatialBlend = 1.0f; // Full 3D audio
+        audioSource.maxDistance = 10.0f; // Max distance for audio falloff
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+        audioSource.Play();
+
+        // Ensure the audio is finished playing (in case of interruptions)
+        while (audioSource.isPlaying)
+        {
+            await Task.Yield(); // Yield until playback completes
+        }
+
     }
 
     void ClearPreviousTransformations()
     {
-        if (woldGameObject != null)
+        if (ObstaclesParentObject != null)
         {
             // Destroy all existing children of the parent object
-            foreach (Transform child in woldGameObject.transform)
+            foreach (Transform child in ObstaclesParentObject.transform)
             {
                 Destroy(child.gameObject);
             }
