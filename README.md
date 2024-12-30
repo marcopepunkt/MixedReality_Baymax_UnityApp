@@ -3,7 +3,7 @@
 - "Start" - Start Obstacle Avoidance
 - "Stop" - End Obstacle Avoidance
 - "Hey Baymax" - To speak with baymax
-- "Toggle Profiler" - To toggle the performance thing
+- "Configure" / "Help" - Open introduction window
 
 ## All the scripts are within the Baymax_scripts (change IP and azure key here)
 IO_Setup - Here all the IP Setting as well as Voice Recognition and TTS is handled
@@ -30,14 +30,3 @@ The Obstacle gets a list of jsons in the following format.
 }
 ```
 The can be used to change the audio sound. The coordinates are used for the spatial Audio.
-
-
-## How to run this stuff?
-1. Run Flask server. Repo: Mixedreality_Baymax on branch unity_integration_azureOpenAI and run file scripts/baymax.py. To run Gemini you need to install the last 2 packages in environment.yaml
-2. Set API key and IP in Baymax_Scripts -> IO_Setup (IP from the flask server) 
-3. Build it as for hello cube 
-4. Just run it. 
-
-## What now? 
-Havent checked about the accuracy of the positions of the boxes which are returned. 
-Currently all Alert sounds are the same... 
